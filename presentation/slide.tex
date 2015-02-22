@@ -1,0 +1,127 @@
+\documentclass[utf8]{beamer}
+\usetheme{Dresden}
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\usepackage{caption}
+\usepackage{subfigure}
+
+\definecolor{HashCodeBlue}{RGB}{22,176,182}
+\definecolor{HashCodeBlueDark}{RGB}{6,124,128}
+\setbeamercolor*{palette primary}{use=structure,fg=white,bg=green}
+\setbeamercolor*{palette secondary}{use=structure,fg=white,bg=HashCodeBlue}
+\setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=HashCodeBlueDark}
+\setbeamercolor{frametitle}{fg=HashCodeBlueDark}
+\setbeamercolor{structure}{fg=HashCodeBlueDark}
+
+%dodatak za programski kod
+\usepackage{listings}
+\usepackage{color}
+\usepackage{setspace}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,
+  numberstyle=\small\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2
+}
+
+\renewcommand{\figurename}{Slika}
+
+% Postavljanje fonta
+\if@fonttimes\RequirePackage{times} \fi
+\if@fontlmodern\RequirePackage{lmodern} \fi
+
+\usecolortheme{sidebartab}
+
+%prikaz broja slajda
+\expandafter\def\expandafter\insertshorttitle\expandafter{%
+	\insertshorttitle\hfill%
+	\insertframenumber\,/\,\inserttotalframenumber}
+
+\newcommand{\engl}[1]{(engl.~\emph{#1})}
+\newcommand{\putat}[3]{\begin{picture}(0,0)(0,0)\put(#1,#2){#3}\end{picture}}
+
+
+\title[Java debugger - hcjdb]{Console Java debugger - \emph{hcjdb}}
+
+\author[Dino Šantl]{}
+
+\institute[\includegraphics{hash_small.png}]{\includegraphics[scale=0.5]{hash.png}}
+\date{Zagreb, February 2014.}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\section{Introduction}
+\begin{frame}{Introduction}	
+	\begin{itemize}
+		\item Direct console debuggin on server
+		\item Somtimes remote debugging with IDE (Eclipse) is very slow
+		\item Existing debugger \emph{jdb} has some imperfections
+	\end{itemize}
+\end{frame}
+
+\section{Problems}
+\begin{frame}{Problems with \emph{jdb}}	
+	\begin{itemize}
+		\item Very long commands arguments - no autocompletion
+		\item Using same commands - no command history
+		\item No condition breakpoints
+		\item Conslusion: \emph{jdb} shell has no advanced features
+	\end{itemize}
+\end{frame}
+
+\section{Tutorial}
+\begin{frame}{Run \emph{hcjdb}}	
+	\begin{itemize}
+		\item -c flag, nms run, hcjdb run
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Basic commands - set breakpoint}	
+	\begin{itemize}
+		\item Very long commands arguments - no autocompletion
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Print variables}	
+	\begin{itemize}
+		\item Very long commands arguments - no autocompletion
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Continue on breakpont}	
+	\begin{itemize}
+		\item Very long commands arguments - no autocompletion
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Other commands}	
+	\begin{itemize}
+		\item Very long commands arguments - no autocompletion
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{\emph{hcjdb} features}	
+	\begin{itemize}
+		\item Very long commands arguments - no autocompletion
+	\end{itemize}
+\end{frame}
+
+
+\end{document}
