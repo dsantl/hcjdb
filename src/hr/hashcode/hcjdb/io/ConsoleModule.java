@@ -13,6 +13,7 @@ import java.util.Set;
 
 import jline.console.ConsoleReader;
 import jline.console.completer.Completer;
+import jline.console.completer.FileNameCompleter;
 
 public class ConsoleModule implements Runnable {
 
@@ -24,7 +25,12 @@ public class ConsoleModule implements Runnable {
 	private Caller<SendType> caller = new Caller<SendType>(SendType.class);
 	private Set<String> allWords = new HashSet<String>();
 
+	private final Message consoleOutput;
+	private final Message processExit;
+
 	public ConsoleModule() {
+		consoleOutput = new Message(MessageType.CONSOLE_OUTPUT);
+		processExit = new Message(MessageType.PROCESS_EXIT);
 		try {
 			this.console = new ConsoleReader();
 			this.console.setPrompt("> ");
@@ -37,17 +43,33 @@ public class ConsoleModule implements Runnable {
 		caller.setCallback(SendType.SEND_INPUT, callback, Message.class, Void.class);
 	}
 
+	public void clearWordSet() {
+		clearCompleters();
+		allWords.clear();
+		List<String> wordList = new ArrayList<String>(allWords);
+		console.addCompleter(new CommandCompleter(wordList));
+	}
+
 	private void clearCompleters() {
 		for (Completer completer : console.getCompleters())
 			console.removeCompleter(completer);
 	}
 
-	public void setCompleterStrings(List<String> words) {
+	public void setCompleterStrings() {
 		clearCompleters();
-		for (String word : words)
-			allWords.add(word);
 		List<String> wordList = new ArrayList<String>(allWords);
 		console.addCompleter(new CommandCompleter(wordList));
+	}
+
+	public void setCompleterStrings(List<String> words) {
+		for (String word : words)
+			allWords.add(word);
+		setCompleterStrings();
+	}
+
+	public void setCompleterFiles() {
+		clearCompleters();
+		console.addCompleter(new FileNameCompleter());
 	}
 
 	@Override
@@ -63,9 +85,9 @@ public class ConsoleModule implements Runnable {
 			}
 			if (line == null || line.equals("exit") || line.equals("quit"))
 				break;
-			caller.call(SendType.SEND_INPUT, new Message(MessageType.CONSOLE_OUTPUT, line), Message.class, Void.class);
+			caller.call(SendType.SEND_INPUT, consoleOutput.setMessage(line), Message.class, Void.class);
 		}
-		caller.call(SendType.SEND_INPUT, new Message(MessageType.PROCESS_EXIT), Message.class, Void.class);
+		caller.call(SendType.SEND_INPUT, processExit, Message.class, Void.class);
 	}
 
 	public void putOnScreen(String s) {

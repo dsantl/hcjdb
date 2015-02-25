@@ -1,6 +1,8 @@
 package hr.hashcode.hcjdb.controller;
 
 import hr.hashcode.hcjdb.callback.Callback;
+import hr.hashcode.hcjdb.controller.Interpreter.InterpreterOutput;
+import hr.hashcode.hcjdb.controller.Message.MessageType;
 import hr.hashcode.hcjdb.io.ConsoleModule;
 import hr.hashcode.hcjdb.io.InputModule;
 import hr.hashcode.hcjdb.io.OutputModule;
@@ -12,12 +14,13 @@ class Controller extends Callback<Message, Void> {
 
 	private static Controller controller = null;
 
-	private InputModule errorReport = new InputModule();
-	private InputModule inputModule = new InputModule();
+	private InputModule errorReport = new InputModule(MessageType.STDERR_OUTPUT);
+	private InputModule inputModule = new InputModule(MessageType.PROCESS_OUTPUT);
 	private OutputModule outputModule = new OutputModule();
 	private ProcessWrapper processWrapper = ProcessWrapper.instance();
 	private ConsoleModule console = new ConsoleModule();
 	private boolean outputIsReady = false;
+	private boolean errorIsReady = false;
 	private boolean exitMessage = false;
 
 	private Controller() {
@@ -78,14 +81,33 @@ class Controller extends Callback<Message, Void> {
 
 		String output = builder.toString();
 
-		// console.putOnScreen(output);
 		while (output.startsWith("> ")) {
 			output = output.substring(2);
 		}
 
-		System.out.print(output);
+		boolean toTheScreen = Interpreter.instance().processOutput(output, console, this);
+
+		if (toTheScreen) {
+			System.out.print(output);
+		}
 
 		outputIsReady = false;
+	}
+
+	private void emptyErrorToScreen() {
+		Character inputChar;
+		StringBuilder builder = new StringBuilder();
+
+		while ((inputChar = errorReport.getInputChar()) != null) {
+			builder.append(inputChar);
+		}
+
+		String output = builder.toString();
+
+		System.err.println("\nERROR:");
+		System.err.println(output);
+
+		errorIsReady = false;
 	}
 
 	public void start(String[] args) {
@@ -93,6 +115,8 @@ class Controller extends Callback<Message, Void> {
 		while (!exitMessage) {
 			if (outputIsReady)
 				emptyOutputToScreen();
+			if (errorIsReady)
+				emptyErrorToScreen();
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
@@ -115,13 +139,21 @@ class Controller extends Callback<Message, Void> {
 				exitMessage = true;
 			break;
 			case CONSOLE_OUTPUT:
-				outputModule.sendInputToProcess(input.getMessage());
+				InterpreterOutput interOut = Interpreter.instance().processInput(input.getMessage(), console);
+				if (interOut.getOutputFlag())
+					outputModule.sendInputToProcess(interOut.getOutput());
 			break;
 			case STDERR_OUTPUT:
+				errorIsReady = true;
 			break;
 			default:
+			// Log error
 			break;
 		}
 		return null;
+	}
+
+	public void sendCommand(String input) {
+		outputModule.sendInputToProcess(input);
 	}
 }

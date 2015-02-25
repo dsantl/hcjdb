@@ -3,6 +3,8 @@ package hr.hashcode.hcjdb.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 class ProcessWrapper {
 
@@ -14,12 +16,25 @@ class ProcessWrapper {
 	private ProcessBuilder processBuilder = null;
 
 	public void prepareProcess(String[] args) {
-		int commandLen = args.length + 1;
-		String[] commandArgs = new String[args.length + 1];
-		commandArgs[0] = jdbName;
-		for (int i = 1; i < commandLen; ++i) {
-			commandArgs[i] = args[i - 1];
+
+		int commandLen = args.length;
+		List<String> commandArgs = new ArrayList<String>();
+		commandArgs.add(jdbName);
+
+		for (int i = 0; i < commandLen; ++i) {
+			if (args[i].startsWith("--" + jdbName)) {
+				String[] pathJdb = args[i].split("=");
+				System.out.println(pathJdb[0]);
+				System.out.println(pathJdb[1]);
+				if (pathJdb.length == 2) {
+					commandArgs.set(0, pathJdb[1]);
+				}
+				continue;
+			}
+			commandArgs.add(args[i]);
 		}
+		for (int i = 0; i < commandArgs.size(); ++i)
+			System.out.println(commandArgs.get(i));
 		processBuilder = new ProcessBuilder(commandArgs);
 	}
 

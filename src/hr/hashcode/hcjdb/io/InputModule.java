@@ -21,8 +21,13 @@ public class InputModule implements Runnable {
 	private Caller<ProcessOutputType> caller = new Caller<ProcessOutputType>(ProcessOutputType.class);
 	private InputStreamReader inputStreamReader = null;
 	private BufferedReader bufferedReader = null;
+	private final Message messageObject;
 
 	private Queue<Character> inputQueue = new LinkedList<Character>();
+
+	public InputModule(MessageType type) {
+		messageObject = new Message(type);
+	}
 
 	public void setInputStream(InputStream inputStream) {
 
@@ -36,7 +41,7 @@ public class InputModule implements Runnable {
 	private void putInQueue(int input) {
 		synchronized (this.inputQueue) {
 			inputQueue.add((char) input);
-			caller.call(ProcessOutputType.NEW_OUTPUT, new Message(MessageType.PROCESS_OUTPUT), Message.class, Void.class);
+			caller.call(ProcessOutputType.NEW_OUTPUT, messageObject, Message.class, Void.class);
 		}
 	}
 

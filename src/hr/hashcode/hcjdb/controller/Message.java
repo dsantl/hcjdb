@@ -19,6 +19,11 @@ public class Message {
 		this.msg = null;
 	}
 
+	public Message setMessage(String msg) {
+		this.msg = msg;
+		return this;
+	}
+
 	public String getMessage() {
 		return msg;
 	}
